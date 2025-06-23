@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AC Coaching - Répartition des macronutriments</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #1e1e1e;
+      --container-bg: #101010;
+      --text-color: #f5f5f5;
+      --input-bg: #1e1e1e;
+      --highlight: #ff5f00;
+      --secondary: #ff5f00;
+      --result-bg: #222;
+      --result-text: #ffd;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: var(--container-bg);
+      width: 100%;
+      max-width: 500px;
+      padding: 2.5rem 2rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--highlight);
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+    }
+    label {
+      font-weight: 600;
+      margin: 1rem 0 0.3rem;
+      display: block;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--secondary);
+      border-radius: 12px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 2rem;
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(45deg, var(--highlight), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #resultat {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: var(--result-bg);
+      border-left: 5px solid var(--highlight);
+      border-radius: 10px;
+      color: var(--result-text);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo"><i class="fas fa-bolt"></i> AC Coaching</div>
+    <h1>Répartition en macronutriments selon ton objectif</h1>
+    <form id="macroForm">
+      <label for="poids">Poids de corps (kg)</label>
+      <input type="number" id="poids" required>
+      <label for="aetq">Apport Énergétique Total Quotidien (AETQ en kcal)</label>
+      <input type="number" id="aetq" required>
+
+      <label for="objectif">Objectif</label>
+      <select id="objectif" required>
+        <option value="perte">Perte de poids</option>
+        <option value="maintien">Maintien</option>
+        <option value="prise">Prise de poids</option>
+      </select>
+
+      <button type="button" onclick="calculerMacros()">Calculer ma répartition</button>
+    </form>
+
+    
+
+    <button id="helpButton" title="Voir la source scientifique" style="position: fixed; bottom: 20px; right: 20px; background-color: var(--highlight); color: white; border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 0; transition: background-color 0.3s, transform 0.2s;" onmouseover="this.style.backgroundColor='#ff7633'; this.style.transform='scale(1.1)'" onmouseout="this.style.backgroundColor='var(--highlight)'; this.style.transform='scale(1)'">
+  ?
+</button>
+
+<script>
+  document.getElementById("helpButton").addEventListener("click", function() {
+    window.open("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5470187/", "_blank");
+  });
+</script>
+
+    <div id="resultat"></div>
+
+<div class="insta-bottom" style="text-align: center; margin-top: 2.5rem;">
+      <p style="margin: 2rem 0 0.5rem; font-size: 1rem; color: var(--text-color);">Envie d’un suivi personnalisé ?</p>
+      <a href="https://www.instagram.com/alexis.champroux" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #E1306C; text-decoration: none; font-weight: bold; font-size: 1rem;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" style="width: 20px; height: 20px; vertical-align: middle;"> Suis-moi sur Instagram
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function calculerMacros() {
+      const poids = parseFloat(document.getElementById("poids").value);
+      const objectif = document.getElementById("objectif").value;
+
+      let protGrKg, lipGrKg;
+
+      if (objectif === "perte") {
+        protGrKg = 2.25; lipGrKg = 0.9;
+      } else if (objectif === "maintien") {
+        protGrKg = 1.6; lipGrKg = 1.0;
+      } else {
+        protGrKg = 1.9; lipGrKg = 1.0;
+      }
+
+      const protGr = protGrKg * poids;
+      const lipGr = lipGrKg * poids;
+      const protKcal = protGr * 4;
+      const lipKcal = lipGr * 9;
+      const aetq = parseFloat(document.getElementById("aetq").value);
+      const glucKcal = aetq - (protKcal + lipKcal);
+      const glucGr = glucKcal / 4;
+
+      const protPct = (protKcal / aetq) * 100;
+      const lipPct = (lipKcal / aetq) * 100;
+      const glucPct = (glucKcal / aetq) * 100;
+
+      document.getElementById("resultat").innerHTML = `
+        <div>
+          <p>🍗 Protéines : <strong>${protGr.toFixed(0)} g</strong> (${(protPct).toFixed(0)}%)</p>
+          <p>🍞 Glucides : <strong>${glucGr.toFixed(0)} g</strong> (${(glucPct).toFixed(0)}%)</p>
+          <p>🥑 Lipides : <strong>${lipGr.toFixed(0)} g</strong> (${(lipPct).toFixed(0)}%)</p>
+        </div>
+        `;
+    }
+  </script>
+</body>
+</html>
